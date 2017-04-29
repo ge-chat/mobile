@@ -35,4 +35,7 @@ object ApiService {
 
     val chart: ChartApiService
         get() = builder!!.create(ChartApiService::class.java)
+
+    val message: MessageApiService
+        get() = builder!!.create(MessageApiService::class.java)
 }

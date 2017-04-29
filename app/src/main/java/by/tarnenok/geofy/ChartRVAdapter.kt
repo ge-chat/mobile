@@ -30,8 +30,8 @@ class ChartRVAdapter(var items: Array<ChartReadModelShort>)
         holder.textTitle.text = items[position].title
         val message = items[position].lastMessage
         if(message != null){
-            holder.textLastMessage.text = message.content
-            holder.textTime.text = df.format(message.createdDate)
+            holder.textLastMessage.text = message.message
+            holder.textTime.text = df.format(message.created)
         }
 
         holder.itemView.onClick {
@@ -71,7 +71,7 @@ class ChartRVAdapter(var items: Array<ChartReadModelShort>)
         constructor(itemView: View) : super(itemView) {
             textTitle = itemView.find<TextView>(R.id.textview_title)
             textLastMessage = itemView.find<TextView>(R.id.textview_last_message)
-            textTime = itemView.find<TextView>(R.id.textview_title)
+            textTime = itemView.find<TextView>(R.id.textview_time)
         }
     }
 }

@@ -11,7 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/view_send">
-
     </android.support.v7.widget.RecyclerView>
     <RelativeLayout
         android:id="@+id/view_send"
@@ -22,6 +21,7 @@
         android:background="@drawable/shadow_top"
         >
         <EditText
+            android:id="@+id/edit_message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/send_message"

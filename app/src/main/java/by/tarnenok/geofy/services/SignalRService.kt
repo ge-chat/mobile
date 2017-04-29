@@ -20,6 +20,7 @@ object SignalRService{
         object Chart{
             val Name = "ChartHub"
             val ChartCreated = "chartCreated"
+            val MessagePosted = "messagePosted"
         }
     }
 }
