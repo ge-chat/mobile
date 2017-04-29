@@ -7,4 +7,7 @@
     <color name="colorHint">#80CBC4</color>
     <color name="colorHintTransparent">#8580cbc4</color>
     <color name="colorPrimary_300">#4DB6AC</color>
+
+    <color name="colorMessage">#64009688</color>
+    <color name="colorYourMessage">#64673ab7</color>
 </resources>
