@@ -11,6 +11,7 @@ import android.widget.TextView
 import by.tarnenok.geofy.services.api.ChartReadModel
 import by.tarnenok.geofy.services.api.MessageReadModel
 import de.hdodenhof.circleimageview.CircleImageView
+import me.himanshusoni.chatmessageview.ChatMessageView
 import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.find
 
@@ -33,16 +34,22 @@ class MessageRVAdapter(var chart: ChartReadModel, val userId: String)
         if(items[position].userId == userId){
             holder.imageUser.visibility = View.GONE
             holder.textUsername.visibility = View.GONE
+            holder.wrapperText.setArrowPosition(ChatMessageView.ArrowPosition.RIGHT)
+            holder.wrapperText.setBackgroundColors(
+                    R.color.colorYourMessage,
+                    R.color.colorYourMessagePressed)
             params.leftMargin = marginInPixes.toInt()
             params.rightMargin = 0
-            holder.textMessage.backgroundColor = ContextCompat.getColor(holder.itemView.context, R.color.colorYourMessage)
         }else{
-            params.rightMargin = marginInPixes.toInt()
-            params.leftMargin = 0
-            holder.textMessage.backgroundColor = ContextCompat.getColor(holder.itemView.context, R.color.colorMessage)
             holder.imageUser.setImageResource(R.drawable.default_logo)
             holder.imageUser.visibility = View.VISIBLE
             holder.textUsername.visibility = View.VISIBLE
+            holder.wrapperText.setArrowPosition(ChatMessageView.ArrowPosition.LEFT)
+            holder.wrapperText.setBackgroundColors(
+                    R.color.colorMessage,
+                    R.color.colorMessagePressed)
+            params.rightMargin = marginInPixes.toInt()
+            params.leftMargin = 0
         }
     }
 
@@ -56,12 +63,14 @@ class MessageRVAdapter(var chart: ChartReadModel, val userId: String)
         val textUsername: TextView
         val imageUser: CircleImageView
         val layoutMessage: LinearLayout
+        val wrapperText: ChatMessageView
 
         constructor(itemView: View) : super(itemView) {
             textMessage = itemView.find<TextView>(R.id.textview_message)
             textUsername = itemView.find<TextView>(R.id.textview_username)
             imageUser = itemView.find<CircleImageView>(R.id.image_user)
             layoutMessage = itemView.find<LinearLayout>(R.id.layout_message)
+            wrapperText = itemView.find<ChatMessageView>(R.id.wrapper_text)
         }
     }
 }

@@ -43,6 +43,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-location:8.4.0'
 
     compile 'de.hdodenhof:circleimageview:2.0.0'
+    compile 'me.himanshusoni.chatmessageview:chat-message-view:1.0.3'
 }
 buildscript {
     ext.kotlin_version = '1.0.1-1'

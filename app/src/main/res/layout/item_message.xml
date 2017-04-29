@@ -21,12 +21,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="author"/>
-        <TextView
-            android:id="@+id/textview_message"
-            android:padding="10dp"
+        <me.himanshusoni.chatmessageview.ChatMessageView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/wrapper_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="long messagelong messagelong messagelong messagelong messagelong message"
-            android:background="@color/colorHintTransparent"/>
+            android:padding="3dp"
+            app:cmv_cornerRadius="3dp">
+            <TextView
+                android:id="@+id/textview_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="long messagelong messagelong messagelong messagelong messagelong message" />
+        </me.himanshusoni.chatmessageview.ChatMessageView>
     </LinearLayout>
 </LinearLayout>

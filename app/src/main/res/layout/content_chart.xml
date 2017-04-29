@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:padding="5dp"
+        android:padding="15dp"
         android:background="@drawable/shadow_top"
         >
         <EditText
@@ -37,7 +37,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:src="@drawable/ic_send"
-            android:background="@null"
-            android:paddingTop="5dp"/>
+            android:background="@null"/>
     </RelativeLayout>
 </RelativeLayout>
