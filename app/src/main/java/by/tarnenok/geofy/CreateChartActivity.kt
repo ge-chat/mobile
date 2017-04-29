@@ -16,7 +16,9 @@ import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.rey.material.widget.Slider
 import com.rey.material.widget.TextView
+import org.jetbrains.anko.enabled
 import org.jetbrains.anko.find
+import org.jetbrains.anko.onClick
 
 class CreateChartActivity : AppCompatActivity() {
     var mMap: GoogleMap? = null
@@ -75,8 +77,8 @@ class CreateChartActivity : AppCompatActivity() {
             }
         }
 
-        val sliderText = find<TextView>(R.id.textview_radius)
-        sliderText.text = "${resources.getString(R.string.radius)} ($defaultRadiusInMetres)"
+        val sliderText = find<android.support.v7.widget.AppCompatTextView>(R.id.textview_radius)
+        sliderText.text = "${resources.getString(R.string.radius)} (${defaultRadiusInMetres.toInt()}m)"
         val slider = find<Slider>(R.id.slider_radius)
         slider.setValue(defaultRadiusInMetres.toFloat(), true)
         slider.setOnPositionChangeListener { view, fromUser, oldPos, newPos, oldValue, newValue ->
@@ -84,6 +86,13 @@ class CreateChartActivity : AppCompatActivity() {
             defaultRadiusInMetres = newValue.toDouble()
             mCircle?.radius = defaultRadiusInMetres
             sliderText.text = "${resources.getString(R.string.radius)} ($defaultRadiusInMetres)"
+        }
+
+        val progress = find<com.rey.material.widget.ProgressView>(R.id.progress_create_chart)
+        val createChartButton = find<com.rey.material.widget.Button>(R.id.button_create_chart)
+        createChartButton.onClick {
+            progress.start()
+            createChartButton.isEnabled = false
         }
     }
 
