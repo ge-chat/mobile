@@ -4,8 +4,8 @@ import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.widget.Button
-import android.widget.EditText
+import android.view.animation.*
+import android.widget.*
 import by.tarnenok.geofy.services.TokenService
 import by.tarnenok.geofy.services.api.ApiService
 import by.tarnenok.geofy.services.api.ErrorViewModel
@@ -34,10 +34,10 @@ class LoginActivity : AppCompatActivity() {
                     .enqueue(object : Callback<TokenModel> {
                 override fun onResponse(call: Call<TokenModel>?, response: Response<TokenModel>?) {
                     progressDialog.cancel()
+                    //goToMainActivity(TokenModel("", "", ""))
+
                     if(response!!.isSuccessful){
-                        TokenService(applicationContext).set(response.body())
-                        val mainIntent = Intent(applicationContext, MainActivity::class.java)
-                        startActivity(mainIntent)
+                        goToMainActivity(response.body())
                     }else{
                         val error = Gson().fromJson(response.errorBody().string(), ErrorViewModel::class.java)
                         alert(error.error_description ?: error.error_description,
@@ -62,5 +62,39 @@ class LoginActivity : AppCompatActivity() {
             val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent);
         }
+    }
+    fun goToMainActivity(body:TokenModel){
+        val logo = find<LinearLayout>(R.id.logo)
+        val items = find<LinearLayout>(R.id.activity_login)
+        val logotext = find<TextView>(R.id.logo_text)
+
+        val opacityText = AlphaAnimation(0f, 1f)
+        opacityText.duration = 3000
+        opacityText.fillAfter = true
+        opacityText.interpolator = LinearInterpolator()
+        opacityText.setAnimationListener(object : Animation.AnimationListener{
+            override fun onAnimationRepeat(animation: Animation?) {}
+            override fun onAnimationStart(animation: Animation?) {}
+            override fun onAnimationEnd(animation: Animation?) {
+                TokenService(applicationContext).set(body)
+                val mainIntent = Intent(applicationContext, MainActivity::class.java)
+                startActivity(mainIntent)
+            }
+        })
+
+        val slideDown = TranslateAnimation(0f,0f,0f,300f)
+        slideDown.interpolator = LinearInterpolator()
+        slideDown.duration = 600
+        slideDown.fillAfter = true
+        slideDown.isFillEnabled = true
+
+        val opacity = AlphaAnimation(1f, 0f)
+        opacity.duration = 600
+        opacity.fillAfter = true
+        opacity.interpolator = LinearInterpolator()
+
+        logo.startAnimation(slideDown)
+        items.startAnimation(opacity)
+        logotext.startAnimation(opacityText)
     }
 }
