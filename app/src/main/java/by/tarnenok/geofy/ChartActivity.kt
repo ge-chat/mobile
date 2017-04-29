@@ -15,10 +15,7 @@ import android.support.v7.widget.Toolbar
 import android.widget.EditText
 import by.tarnenok.geofy.services.SignalRService
 import by.tarnenok.geofy.services.TokenService
-import by.tarnenok.geofy.services.api.ApiService
-import by.tarnenok.geofy.services.api.ChartReadModel
-import by.tarnenok.geofy.services.api.MessageReadModel
-import by.tarnenok.geofy.services.api.SendMessageModel
+import by.tarnenok.geofy.services.api.*
 import com.google.gson.Gson
 import microsoft.aspnet.signalr.client.hubs.HubConnection
 import org.jetbrains.anko.alert
@@ -86,7 +83,7 @@ class ChartActivity : AppCompatActivity(){
         val linearManager = LinearLayoutManager(this)
         linearManager.stackFromEnd = true
         messagesRV.layoutManager = linearManager
-        messagesRV.adapter = MessageRVAdapter(chartModel!!.messages, chartModel!!.ownerId, chartModel!!.id, "")
+        messagesRV.adapter = MessageRVAdapter(chartModel!!, TokenService(this).get()!!.userInfo().id)
 
         signalrConnection = SignalRService.createConnection(Config.apiHost, TokenService(this))
         val chartHub = signalrConnection!!.createHubProxy(SignalRService.Hubs.Chart.Name)
@@ -98,6 +95,11 @@ class ChartActivity : AppCompatActivity(){
             message.text.clear()
             messagesRV.smoothScrollToPosition(messagesRV.adapter.itemCount - 1)
         }}, MessageReadModel::class.java)
+        chartHub.on(SignalRService.Hubs.Chart.ParticipantAdded, { data ->
+            if(data.chartId == chartModel!!.id){
+                chartModel!!.participants.add(data.participant)
+            }
+        }, ParticipantAddedSignal::class.java)
     }
 
     override fun onStart() {

@@ -21,6 +21,7 @@ object SignalRService{
             val Name = "ChartHub"
             val ChartCreated = "chartCreated"
             val MessagePosted = "messagePosted"
+            val ParticipantAdded = "participantAdded"
         }
     }
 }
