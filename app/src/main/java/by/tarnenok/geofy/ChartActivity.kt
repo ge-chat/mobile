@@ -2,6 +2,7 @@ package by.tarnenok.geofy
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.os.PersistableBundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
@@ -83,15 +84,20 @@ class ChartActivity : AppCompatActivity(){
         val messagesRV = find<RecyclerView>(R.id.recycleview_messages)
         messagesRV.setHasFixedSize(true)
         val linearManager = LinearLayoutManager(this)
-        linearManager.reverseLayout = true
+        linearManager.stackFromEnd = true
         messagesRV.layoutManager = linearManager
         messagesRV.adapter = MessageRVAdapter(chartModel!!.messages, chartModel!!.ownerId, chartModel!!.id, "")
 
         signalrConnection = SignalRService.createConnection(Config.apiHost, TokenService(this))
         val chartHub = signalrConnection!!.createHubProxy(SignalRService.Hubs.Chart.Name)
-        chartHub.on(SignalRService.Hubs.Chart.MessagePosted, { data ->
-
-        }, MessageReadModel::class.java)
+        val handler = Handler()
+        chartHub.on(SignalRService.Hubs.Chart.MessagePosted, { data -> handler.post {
+            chartModel!!.messages.add(data)
+            messagesRV.adapter.notifyDataSetChanged()
+            val message = find<EditText>(R.id.edit_message)
+            message.text.clear()
+            messagesRV.smoothScrollToPosition(messagesRV.adapter.itemCount - 1)
+        }}, MessageReadModel::class.java)
     }
 
     override fun onStart() {

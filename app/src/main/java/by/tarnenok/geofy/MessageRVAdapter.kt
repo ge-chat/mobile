@@ -11,7 +11,7 @@ import org.jetbrains.anko.find
 /**
  * Created by tarne on 22.05.16.
  */
-class MessageRVAdapter(var items: Array<MessageReadModel>, val ownerId: String, val chartId: String, val userId: String)
+class MessageRVAdapter(var items: MutableList<MessageReadModel>, val ownerId: String, val chartId: String, val userId: String)
     : RecyclerView.Adapter<MessageRVAdapter.MessageViewHolder>(){
 
     override fun getItemCount() = items.size
