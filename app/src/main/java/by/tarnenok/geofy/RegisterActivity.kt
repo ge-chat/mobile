@@ -1,11 +1,13 @@
 package by.tarnenok.geofy
 
 import android.app.ProgressDialog
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.text.Html
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -20,10 +22,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class RegisterActivity : AppCompatActivity() {
-
-    //use dependency injection
-    val apiService = ApiService("http://192.168.55.2:5000/")
+class RegisterActivity : AppCompatActivity(), BaseActivity {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,16 +43,20 @@ class RegisterActivity : AppCompatActivity() {
             )).enqueue( object : Callback<Void> {
                 override fun onFailure(call: Call<Void>?, t: Throwable?) {
                     progressDialog.cancel()
+                    alert(resources.getString(R.string.bad_connection)){
+                        positiveButton { resources.getString(R.string.ok) }
+                    }.show()
                 }
 
                 override fun onResponse(call: Call<Void>?, response: Response<Void>?) {
                     progressDialog.cancel()
                     if(response!!.isSuccessful){
-
+                        val loginIntent = Intent(applicationContext, LoginActivity::class.java)
+                        startActivity(loginIntent)
                     }else{
                         val errors = Gson().fromJson(response.errorBody().string(), Array<String?>::class.java)
-                        alert(resources.getString(R.string.errors_title),
-                                errors.toUnorderedListFromResource(resources, packageName)){
+                        alert(errors.toUnorderedListFromResource(resources, packageName)!!,
+                                resources.getString(R.string.errors_title)){
                             positiveButton(resources.getString(R.string.ok)){}
                         }.show()
                     }

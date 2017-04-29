@@ -7,9 +7,9 @@ import android.content.res.Resources
  */
 fun Resources.getStringByName(name: String, packageName: String) : String = getString(getIdentifier(name, "string", packageName))
 fun Collection<String?>.toUnorderedList() : String?{
-    val sb = StringBuilder("<ul>")
-    forEach { sb.append("<li>$it<li>") }
-    sb.append("</ul>")
+    val sb = StringBuilder("")
+    forEach { sb.append("$it\n") }
+    sb.append("")
     return sb.toString()
 }
 fun Array<String?>.toUnorderedListFromResource(resources: Resources, packageName: String) : String?

@@ -16,4 +16,14 @@
     <string name="errors_title">Error</string>
     <string name="ok">Ok</string>
     <string name="cancel">Cancel</string>
+    <string name="bad_connection">Bad connection</string>
+
+    <!--errors-->
+    <string name="userAlreadyRegistred">User already registred</string>
+    <string name="userInvalidCredentials">Invalid credetials</string>
+    <string name="emailReuired">Email required</string>
+    <string name="passwordRequired">Password required</string>
+    <string name="confirmPasswordRequired">Confirm password</string>
+    <string name="userNameRequired">Username required</string>
+    <string name="emailInvalid">Invalid email</string>
 </resources>

@@ -16,12 +16,12 @@
             android:src="@mipmap/ic_launcher"
             android:layout_marginTop="50dp"/>
         <EditText
-            android:id="@+id/edit_username"
+            android:id="@+id/edit_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:inputType="textEmailAddress"
-            android:hint="@string/hint_username"
+            android:hint="@string/hint_email"
             android:textColor="@android:color/white"
             android:textColorHint="@color/colorHint"
             android:textColorHighlight="@android:color/white"
@@ -36,7 +36,8 @@
             android:textColor="@android:color/white"
             android:textColorHint="@color/colorHint"
             android:textColorHighlight="@android:color/white"
-            android:textColorLink="@android:color/white"/>
+            android:textColorLink="@android:color/white"
+            android:inputType="textPassword"/>
         <Button
             android:id="@+id/button_login"
             android:layout_width="match_parent"

@@ -1,7 +1,5 @@
 package by.tarnenok.geofy.services.api
 
-import okhttp3.ResponseBody
-import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -16,9 +14,4 @@ class ApiService(val baseUrl: String) {
 
     val auth: AuthenticationApiService
         get() = builder.create(AuthenticationApiService::class.java)
-
-    val error: Converter<ResponseBody, ApiError>
-        get() = builder.responseBodyConverter(ApiError::class.java, arrayOf())
 }
-
-data class ApiError(val statusCode: Int?, val message: String?)

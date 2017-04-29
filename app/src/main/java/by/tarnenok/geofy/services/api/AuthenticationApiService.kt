@@ -9,5 +9,5 @@ interface  AuthenticationApiService {
     fun registerUser(@Body model: UserRegisterModel?) : Call<Void>
 
     @POST("api/auth/login")
-    fun login(@Body model: UserLoginModel?) : Call<String>
+    fun login(@Body model: UserLoginModel?) : Call<TokenModel>
 }
