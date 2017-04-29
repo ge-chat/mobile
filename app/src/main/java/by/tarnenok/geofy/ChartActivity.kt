@@ -37,7 +37,7 @@ class ChartActivity : AppCompatActivity(){
         val KEY_CHART  = "chart"
     }
 
-    var chartModel: ChartReadModel? = null
+    var chatModel: ChartReadModel? = null
     var signalrConnection: HubConnection? = null
     var mApiClient: GoogleApiClient? = null
 
@@ -53,10 +53,10 @@ class ChartActivity : AppCompatActivity(){
         ApiService.initialize(Config.apiHost, TokenService(this).get()?.access_token)
 
         val chartModelStr = intent.getStringExtra(ChartActivity.CONSTANTS.KEY_CHART)
-        chartModel = Gson().fromJson(chartModelStr, ChartReadModel::class.java)
+        chatModel = Gson().fromJson(chartModelStr, ChartReadModel::class.java)
 
         val toolbar = find<Toolbar>(R.id.toolbar)
-        toolbar.title = chartModel?.title
+        toolbar.title = chatModel?.title
         setSupportActionBar(toolbar)
 
         val drawer = find<DrawerLayout>(R.id.drawer_layout)
@@ -78,7 +78,7 @@ class ChartActivity : AppCompatActivity(){
         sendMessageButton = find<com.rey.material.widget.ImageButton>(R.id.button_send)
         sendMessageButton?.onClick {
             val message = find<EditText>(R.id.edit_message).text.toString()
-            ApiService.message.create(SendMessageModel(message, chartModel!!.id)).enqueue(
+            ApiService.message.create(SendMessageModel(message, chatModel!!.id)).enqueue(
                 object : Callback<Void> {
                     override fun onFailure(call: Call<Void>?, t: Throwable?) {
                         toast(R.string.bad_connection)
@@ -96,24 +96,29 @@ class ChartActivity : AppCompatActivity(){
         val linearManager = LinearLayoutManager(this)
         linearManager.stackFromEnd = true
         messagesRV.layoutManager = linearManager
-        messagesRV.adapter = MessageRVAdapter(chartModel!!, TokenService(this).get()!!.userInfo().id)
+        messagesRV.adapter = MessageRVAdapter(chatModel!!, TokenService(this).get()!!.userInfo().id)
 
         signalrConnection = SignalRService.createConnection(
-                Config.apiHost, TokenService(this), hashMapOf(Pair("chatId", chartModel!!.id)))
+                Config.apiHost, TokenService(this), hashMapOf(Pair("chatId", chatModel!!.id)))
         val chartHub = signalrConnection!!.createHubProxy(SignalRService.Hubs.Chart.Name)
         val handler = Handler()
         chartHub.on(SignalRService.Hubs.Chart.MessagePosted, { data -> handler.post {
-            chartModel!!.messages.add(data)
+            chatModel!!.messages.add(data)
             messagesRV.adapter.notifyDataSetChanged()
             sendMessageText = find<EditText>(R.id.edit_message)
             sendMessageText!!.text.clear()
             messagesRV.smoothScrollToPosition(messagesRV.adapter.itemCount - 1)
         }}, MessageReadModel::class.java)
         chartHub.on(SignalRService.Hubs.Chart.ParticipantAdded, { data ->
-            if(data.chartId == chartModel!!.id){
-                chartModel!!.participants.add(data.participant)
+            if(data.chartId == chatModel!!.id){
+                chatModel!!.participants.add(data.participant)
             }
         }, ParticipantAddedSignal::class.java)
+        chartHub.on(SignalRService.Hubs.Chart.ParticipantNameChanged, { data -> handler.post {
+            chatModel!!.changeNameForUser(data.userId, data.name)
+            messagesRV.adapter.notifyDataSetChanged()
+        }}, ParticipantNameChangedSignal::class.java)
+
 
         mApiClient = GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(object : GoogleApiClient.ConnectionCallbacks{
@@ -145,11 +150,11 @@ class ChartActivity : AppCompatActivity(){
 
 
     fun checkPosition(location: android.location.Location) {
-        if(chartModel == null) return
+        if(chatModel == null) return
 
         val fromLocation = android.location.Location("")
-        fromLocation.latitude = chartModel!!.location.longitude
-        fromLocation.longitude = chartModel!!.location.latitude
+        fromLocation.latitude = chatModel!!.location.longitude
+        fromLocation.longitude = chatModel!!.location.latitude
         fromLocation.altitude = 0.0
 
         val toLocation = android.location.Location("")
@@ -158,7 +163,7 @@ class ChartActivity : AppCompatActivity(){
         toLocation.altitude = 0.0
 
         val distance = fromLocation.distanceTo(toLocation)
-        val nowInChat = chartModel!!.radius > distance
+        val nowInChat = chatModel!!.radius > distance
         if(nowInChat != inChat){
             changeStatus(nowInChat);
             inChat = nowInChat
@@ -195,7 +200,11 @@ class ChartActivity : AppCompatActivity(){
                                         textLayout.error = resources.getString(R.string.required)
                                         textLayout.isErrorEnabled = true
                                     }else{
-
+                                        changeChatName(ChangeNameModel(chatModel!!.id, name!!.text.toString()), {
+                                            textLayout.error = it
+                                        }) {
+                                            dismiss()
+                                        }
                                     }
                                 }
                             }
@@ -204,9 +213,27 @@ class ChartActivity : AppCompatActivity(){
                     }
                 }.show()
             }
-            R.id.nav_settings -> {
-
-            }
+            R.id.nav_settings -> Unit
         }
+    }
+
+    fun changeChatName(params: ChangeNameModel, error: (err: String) -> Unit, ok: () -> Unit){
+        ApiService.chart.changeName(params).enqueue(
+                object : Callback<Void> {
+                    override fun onFailure(call: Call<Void>?, t: Throwable?) {
+                        toast(R.string.bad_connection)
+                    }
+
+                    override fun onResponse(call: Call<Void>?, response: Response<Void>?) {
+                        if(!response!!.isSuccessful){
+                            val errors = Gson().fromJson(response.errorBody().string(), Array<String>::class.java)
+                            val errorName = if(errors.firstOrNull() != null) resources.getStringByName(errors.first(), packageName) else ""
+                            error(errorName)
+                        }else{
+                            ok()
+                        }
+                    }
+                }
+        )
     }
 }

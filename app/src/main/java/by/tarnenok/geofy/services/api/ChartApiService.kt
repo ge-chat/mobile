@@ -15,4 +15,7 @@ interface ChartApiService {
 
     @GET("api/chart/{id}")
     fun getChart(@Path("id") id: String) : Call<ChartReadModel>
+
+    @POST("api/chart/changeName")
+    fun changeName(@Body model: ChangeNameModel?) : Call<Void>
 }

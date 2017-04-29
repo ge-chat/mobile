@@ -34,6 +34,7 @@ object SignalRService{
             val Name = "ChartHub"
             val MessagePosted = "messagePosted"
             val ParticipantAdded = "participantAdded"
+            val ParticipantNameChanged = "participantNameChanged"
 
             val AddConnection = "connectToChat"
             val RemoveConnection = "disconnectFromChat"

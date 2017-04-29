@@ -8,6 +8,8 @@
     <string name="userNameRequired">Username required</string>
     <string name="emailInvalid">Invalid email</string>
     <string name="titleRequired">Title required</string>
+    <string name="userAlreadyInChat">This name is already in use</string>
+    <string name="userNotInChat">You are not in chat</string>
 
     <string name="title_activity_create_chart">Create chat</string>
     <string name="app_name">Geofy</string>
