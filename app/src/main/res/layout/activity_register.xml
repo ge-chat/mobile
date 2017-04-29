@@ -68,14 +68,17 @@
                 android:hint="@string/hint_confirmPassword"
                 android:inputType="textPassword"/>
         </android.support.design.widget.TextInputLayout>
-        <Button
+        <com.rey.material.widget.Button
             android:id="@+id/button_register"
+            style="@style/Material.Drawable.Ripple.Touch.Light"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
             android:text="@string/register"
-            android:textColor="@android:color/white"
+            app:rd_enable="true"
+            app:rd_rippleColor="@color/colorHint"
             android:background="@color/colorPrimary_300"
-            android:inputType="textPassword"/>
+            android:textColor="@android:color/white"
+            android:layout_margin="5dp"
+            />
     </LinearLayout>
 </ScrollView>

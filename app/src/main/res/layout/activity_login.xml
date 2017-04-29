@@ -26,7 +26,7 @@
                 android:layout_margin="5dp"
                 android:inputType="textEmailAddress"
                 android:hint="@string/hint_email"
-                />
+                android:textColor="@color/colorHint"/>
         </android.support.design.widget.TextInputLayout>
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
@@ -39,23 +39,32 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:hint="@string/hint_password"
-                android:inputType="textPassword"/>
+                android:inputType="textPassword"
+                android:textColor="@color/colorHint"/>
         </android.support.design.widget.TextInputLayout>
-        <Button
+        <com.rey.material.widget.Button
             android:id="@+id/button_login"
+            style="@style/Material.Drawable.Ripple.Touch.Light"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
             android:text="@string/login"
+            app:rd_enable="true"
+            app:rd_rippleColor="@color/colorHint"
+            android:background="@color/colorPrimary_300"
             android:textColor="@android:color/white"
-            android:background="@color/colorPrimary_300" />
-        <Button
+            android:layout_margin="5dp"
+            />
+        <com.rey.material.widget.Button
             android:id="@+id/button_register"
+            style="@style/Material.Drawable.Ripple.Touch.Light"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
             android:text="@string/register"
+            app:rd_enable="true"
+            app:rd_rippleColor="@color/colorHint"
+            android:background="@null"
             android:textColor="@android:color/white"
-            style="?android:attr/borderlessButtonStyle"/>
+            android:layout_margin="5dp"
+            />
     </LinearLayout>
 </ScrollView>

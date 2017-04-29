@@ -41,6 +41,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
+    override fun onStart() {
+        if(TokenService(applicationContext).get() == null){
+            val loginIntent = Intent(this, LoginActivity::class.java)
+            startActivity(loginIntent)
+        }
+        super.onStart()
+    }
+
     override fun onBackPressed() {
         val drawer = find<DrawerLayout>(R.id.drawer_layout)
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -71,7 +79,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_slideshow -> Unit
             R.id.nav_manage -> Unit
             R.id.nav_share -> Unit
-            R.id.nav_send -> Unit
+            R.id.nav_send -> {
+                TokenService(applicationContext).reset()
+                val loginIntent = Intent(this, LoginActivity::class.java)
+                startActivity(loginIntent)
+            }
         }
 
         val drawer = find<DrawerLayout>(R.id.drawer_layout)

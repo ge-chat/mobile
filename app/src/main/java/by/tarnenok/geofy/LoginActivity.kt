@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Button
 import android.widget.EditText
+import by.tarnenok.geofy.services.api.ErrorViewModel
 import by.tarnenok.geofy.services.api.TokenModel
 import by.tarnenok.geofy.services.api.UserLoginModel
 import com.google.gson.Gson
@@ -26,19 +27,17 @@ class LoginActivity : AppCompatActivity(), BaseActivity{
             val email = find<EditText>(R.id.edit_email).text.toString();
             val password = find<EditText>(R.id.edit_password).text.toString();
             val progressDialog = ProgressDialog.show(this, "", resources.getString(R.string.loading_text))
-            apiService.auth.login(UserLoginModel(
-                    email,
-                    password
-            )).enqueue(object : Callback<TokenModel> {
+            apiService.auth.login(email,password)
+                    .enqueue(object : Callback<TokenModel> {
                 override fun onResponse(call: Call<TokenModel>?, response: Response<TokenModel>?) {
                     progressDialog.cancel()
                     if(response!!.isSuccessful){
-                        TokenService.set(response.body().token)
+                        TokenService(applicationContext).set(response.body())
                         val mainIntent = Intent(applicationContext, MainActivity::class.java)
                         startActivity(mainIntent)
                     }else{
-                        val errors = Gson().fromJson(response.errorBody().string(), Array<String?>::class.java)
-                        alert(errors.toUnorderedListFromResource(resources, packageName)!!,
+                        val error = Gson().fromJson(response.errorBody().string(), ErrorViewModel::class.java)
+                        alert(error.error_description!!,
                                 resources.getString(R.string.errors_title)){
                             positiveButton(resources.getString(R.string.ok)){}
                         }.show()
