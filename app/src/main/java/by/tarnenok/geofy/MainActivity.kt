@@ -1,15 +1,15 @@
 package by.tarnenok.geofy
 
+import android.app.Activity
 import android.content.Intent
 import android.location.Location
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.NavigationView
-import android.support.design.widget.Snackbar
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
-import android.support.v7.app.ActionBarActivity
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -24,13 +24,17 @@ import by.tarnenok.geofy.services.api.ApiService
 import by.tarnenok.geofy.services.api.ChartReadModelShort
 import by.tarnenok.geofy.services.api.MessageReadModel
 import by.tarnenok.geofy.services.api.ShortMessage
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
+import com.google.android.gms.common.GooglePlayServicesUtil
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationServices
-import com.google.gson.Gson
+import com.google.android.gms.location.LocationSettingsRequest
+import com.google.android.gms.location.LocationSettingsStates
+import com.google.android.gms.location.LocationSettingsStatusCodes
 import com.rey.material.widget.ProgressView
 import microsoft.aspnet.signalr.client.hubs.HubConnection
 import microsoft.aspnet.signalr.client.hubs.HubProxy
-import org.jetbrains.anko.alert
 import org.jetbrains.anko.find
 import org.jetbrains.anko.onClick
 import org.jetbrains.anko.toast
@@ -52,9 +56,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     var signalrConnection: HubConnection? = null
     var chartHub: HubProxy? = null
 
+    val geoSettings: LocationSettingsRequest
+        get(){
+            val builder = LocationSettingsRequest.Builder()
+                .addLocationRequest(Config.locationRequest)
+            builder.setNeedBle(true)
+            return builder.build()
+        }
+
+    val REQUEST_CHECK_SETTINGS = 0x1;
+    val PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        checkInstalledGoogleServices()
+
         ApiService.initialize(Config.apiHost, TokenService(this).get()?.access_token)
 
         val toolbar = find<Toolbar>(R.id.toolbar)
@@ -86,15 +103,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     override fun onConnectionSuspended(p0: Int) { }
 
                     override fun onConnected(bundle: Bundle?) {
-                        LocationServices.FusedLocationApi.requestLocationUpdates(
-                                mApiClient, Config.locationRequest) { location ->
-                            updateCharts(location)
-                        };
-                        try{
-                            val location = LocationServices.FusedLocationApi.getLastLocation(
-                                    mApiClient)
-                            updateCharts(location)
-                        }catch(ex: Exception){}
+                        val geoSettingsResult = LocationServices.SettingsApi.checkLocationSettings(mApiClient, geoSettings)
+                        geoSettingsResult.setResultCallback { result ->
+                            val status = result.status
+                            when (status.statusCode){
+                                LocationSettingsStatusCodes.SUCCESS -> startLocationUpdating()
+                                LocationSettingsStatusCodes.RESOLUTION_REQUIRED -> {
+                                    try{
+                                        status.startResolutionForResult(this@MainActivity, REQUEST_CHECK_SETTINGS)
+                                    }catch(ex: Exception){}
+                                }
+                                LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE -> {
+                                    //TODO alert and close application
+                                }
+                            }
+                        }
                     }
                 })
                 .addOnConnectionFailedListener { }
@@ -130,7 +153,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 SignalRService.Hubs.Chart.RemoveConnection, signalrConnection?.connectionId, chatsForRemove)
 
         mApiClient?.disconnect()
-        signalrConnection?.stop()
+        if(signalrConnection?.connectionId != null) signalrConnection?.stop()
         super.onStop()
     }
 
@@ -172,6 +195,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when(requestCode){
+            REQUEST_CHECK_SETTINGS -> when(resultCode){
+                Activity.RESULT_OK -> startLocationUpdating()
+                Activity.RESULT_CANCELED -> toast(resources.getString(R.string.enable_location))
+            }
+            PLAY_SERVICES_RESOLUTION_REQUEST -> when(resultCode){
+                Activity.RESULT_OK ->{
+
+                }
+            }
+        }
+    }
+
     fun updateCharts(location: Location){
         if(mCallback != null && !mCallback!!.isExecuted) return
         if(mLocation != null) if (mLocation!!.distanceTo(location) < 1) return
@@ -188,7 +225,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             override fun onResponse(call: Call<MutableList<ChartReadModelShort>>, response: Response<MutableList<ChartReadModelShort>>) {
                 mProgress?.stop()
-                if(response!!.isSuccessful){
+                if(response.isSuccessful){
                     updateConnections(response.body())
                     currentChats = response.body()
                     //TODO fill resycleview
@@ -210,5 +247,30 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 SignalRService.Hubs.Chart.AddConnection, signalrConnection?.connectionId, chatsForAdd)
         if(chatsForRemove.any()) chartHub?.invoke(
                 SignalRService.Hubs.Chart.RemoveConnection, signalrConnection?.connectionId, chatsForRemove)
+    }
+
+    fun startLocationUpdating(){
+        LocationServices.FusedLocationApi.requestLocationUpdates(
+                mApiClient, Config.locationRequest) { location ->
+            updateCharts(location)
+        };
+
+        try{
+            val location = LocationServices.FusedLocationApi.getLastLocation(
+                    mApiClient)
+            updateCharts(location)
+        }catch(ex: Exception){}
+    }
+
+    fun checkInstalledGoogleServices(): Boolean{
+        val apiAvailability = GoogleApiAvailability.getInstance()
+        val code = apiAvailability.isGooglePlayServicesAvailable(this)
+        if(code != ConnectionResult.SUCCESS){
+            if(apiAvailability.isUserResolvableError(code)){
+                apiAvailability.showErrorDialogFragment(this, code, PLAY_SERVICES_RESOLUTION_REQUEST)
+            }
+            return false
+        }
+        return true
     }
 }
