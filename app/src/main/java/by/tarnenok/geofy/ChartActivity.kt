@@ -10,8 +10,12 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
+import android.view.Gravity
+import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
+import by.tarnenok.geofy.android.flatButton
 import by.tarnenok.geofy.services.SignalRService
 import by.tarnenok.geofy.services.TokenService
 import by.tarnenok.geofy.services.api.*
@@ -19,10 +23,8 @@ import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationServices
 import com.google.gson.Gson
 import microsoft.aspnet.signalr.client.hubs.HubConnection
-import org.jetbrains.anko.backgroundColor
-import org.jetbrains.anko.find
-import org.jetbrains.anko.onClick
-import org.jetbrains.anko.toast
+import org.jetbrains.anko.*
+import org.jetbrains.anko.design.textInputLayout
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -64,7 +66,8 @@ class ChartActivity : AppCompatActivity(){
         toggle.syncState()
 
         val navigationView = find<NavigationView>(R.id.nav_view)
-        navigationView.setNavigationItemSelectedListener{
+        navigationView.setNavigationItemSelectedListener{ item ->
+            onNavigationClick(item)
             val drawer = find<DrawerLayout>(R.id.drawer_layout)
             drawer.closeDrawer(GravityCompat.START)
             true
@@ -169,5 +172,41 @@ class ChartActivity : AppCompatActivity(){
         toast(message)
         val color = if(inChat) resources.getColor(R.color.white) else resources.getColor(R.color.disabled)
         sendMessageView?.backgroundColor = color
+    }
+
+    fun onNavigationClick(item: MenuItem){
+        when(item.itemId){
+            R.id.nav_change_name -> {
+                alert(resources.getString(R.string.change_name)) {
+                    customView {
+                        verticalLayout {
+                            var name: EditText? = null
+                            val textLayout = textInputLayout {
+                                name = editText(){
+                                    hint = resources.getString(R.string.name)
+                                }
+                            }
+                            flatButton(resources.getString(R.string.change)) {
+                                lparams(width = wrapContent, height = wrapContent){
+                                    horizontalGravity = Gravity.RIGHT
+                                }
+                                onClick {
+                                    if(name!!.text.isEmpty()){
+                                        textLayout.error = resources.getString(R.string.required)
+                                        textLayout.isErrorEnabled = true
+                                    }else{
+
+                                    }
+                                }
+                            }
+                            padding = resources.getDimension(R.dimen.alert_padding).toInt()
+                        }
+                    }
+                }.show()
+            }
+            R.id.nav_settings -> {
+
+            }
+        }
     }
 }

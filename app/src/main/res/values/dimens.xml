@@ -8,4 +8,5 @@
     <dimen name="activity_vertical_padding">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="layout_message_margin">70dp</dimen>
+    <dimen name="alert_padding">10dp</dimen>
 </resources>
