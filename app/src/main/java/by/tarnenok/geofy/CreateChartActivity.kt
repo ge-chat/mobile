@@ -1,13 +1,18 @@
 package by.tarnenok.geofy
 
+import android.content.Intent
 import android.location.Location
 import android.os.Bundle
-import android.os.Handler
+import android.support.design.widget.TextInputLayout
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.widget.EditText
+import by.tarnenok.geofy.services.SignalRService
 import by.tarnenok.geofy.services.TokenService
-import by.tarnenok.geofy.services.createSignalRConnection
+import by.tarnenok.geofy.services.api.ApiService
+import by.tarnenok.geofy.services.api.ChartReadModel
+import by.tarnenok.geofy.services.api.CreateChartModel
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
@@ -17,15 +22,17 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.Circle
 import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
+import com.google.gson.Gson
 import com.rey.material.widget.Slider
-import microsoft.aspnet.signalr.client.LogLevel
-import microsoft.aspnet.signalr.client.Logger
-import microsoft.aspnet.signalr.client.Platform
-import microsoft.aspnet.signalr.client.http.android.AndroidPlatformComponent
 import microsoft.aspnet.signalr.client.hubs.HubConnection
+import microsoft.aspnet.signalr.client.hubs.SubscriptionHandler
+import microsoft.aspnet.signalr.client.hubs.SubscriptionHandler1
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.find
 import org.jetbrains.anko.onClick
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class CreateChartActivity : AppCompatActivity() , BaseActivity {
     var mMap: GoogleMap? = null
@@ -47,9 +54,8 @@ class CreateChartActivity : AppCompatActivity() , BaseActivity {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_group)
-
-        signalrConnection = createSignalRConnection(apiHost, TokenService(this))
+        setContentView(R.layout.activity_create_chart)
+        ApiService.initialize(apiHost, TokenService(this).get()?.access_token)
 
         val toolbar = find<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -60,9 +66,7 @@ class CreateChartActivity : AppCompatActivity() , BaseActivity {
 
         mApiClient = GoogleApiClient.Builder(this)
              .addConnectionCallbacks(object : GoogleApiClient.ConnectionCallbacks{
-                 override fun onConnectionSuspended(p0: Int) {
-                     //throw UnsupportedOperationException()
-                 }
+                 override fun onConnectionSuspended(p0: Int) { }
 
                  override fun onConnected(bundle: Bundle?) {
                      LocationServices.FusedLocationApi.requestLocationUpdates(
@@ -73,9 +77,7 @@ class CreateChartActivity : AppCompatActivity() , BaseActivity {
                              mApiClient)
                  }
              })
-            .addOnConnectionFailedListener {
-
-            }
+            .addOnConnectionFailedListener { }
             .addApi(LocationServices.API)
             .build()
 
@@ -101,24 +103,64 @@ class CreateChartActivity : AppCompatActivity() , BaseActivity {
         val progress = find<com.rey.material.widget.ProgressView>(R.id.progress_create_chart)
         val createChartButton = find<com.rey.material.widget.Button>(R.id.button_create_chart)
         createChartButton.onClick {
+            val title = find<EditText>(R.id.edit_title).text.toString();
+            if(title.isNullOrEmpty()) {
+                val textInputTitle = find<TextInputLayout>(R.id.textinput_title);
+                textInputTitle.error = getString(R.string.titleRequired)
+                textInputTitle.isErrorEnabled = true;
+                return@onClick
+            }
             progress.start()
             createChartButton.isEnabled = false
+            ApiService.chart.createChart(CreateChartModel(
+                title,
+                mLocation!!.latitude,
+                mLocation!!.longitude,
+                defaultRadiusInMetres,
+                null
+            )).enqueue(object : Callback<Void> {
+                override fun onFailure(call: Call<Void>?, t: Throwable?) {
+                    progress.stop()
+                    alert(resources.getString(R.string.bad_connection)){
+                        positiveButton { resources.getString(R.string.ok) }
+                    }.show()
+                }
+
+                override fun onResponse(call: Call<Void>?, response: Response<Void>?) {
+                    progress.stop()
+                    if(!response!!.isSuccessful){
+                        val errors = Gson().fromJson(response.errorBody().string(), Array<String?>::class.java)
+                        alert(errors.toUnorderedListFromResource(resources, packageName)!!,
+                                resources.getString(R.string.errors_title)){
+                            positiveButton(resources.getString(R.string.ok)){}
+                        }.show()
+                    }
+                }
+            })
         }
+
+        signalrConnection = SignalRService.createConnection(apiHost, TokenService(this))
+
+        val chartHub = signalrConnection!!.createHubProxy(SignalRService.Hubs.Chart.Name)
+        chartHub.on(SignalRService.Hubs.Chart.ChartCreated, { data ->
+            //TODO implement actions
+        }, ChartReadModel::class.java)
     }
 
     override fun onStart() {
-        mApiClient!!.connect()
-        signalrConnection!!.start()
+        mApiClient?.connect()
+        signalrConnection?.start()
         super.onStart()
     }
 
     override fun onStop() {
-        mApiClient!!.disconnect()
-        signalrConnection!!.stop()
+        mApiClient?.disconnect()
+        signalrConnection?.stop()
         super.onStop()
     }
 
     private fun setCameraMap(location: Location){
+        mLocation = location
         val latLang = LatLng(location.latitude, location.longitude)
 
         if(mMap == null) return

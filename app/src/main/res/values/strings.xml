@@ -7,8 +7,9 @@
     <string name="confirmPasswordRequired">Confirm password</string>
     <string name="userNameRequired">Username required</string>
     <string name="emailInvalid">Invalid email</string>
-    <string name="title_activity_create_chart">Create chat</string>
+    <string name="titleRequired">Title required</string>
 
+    <string name="title_activity_create_chart">Create chat</string>
     <string name="app_name">Geofy</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

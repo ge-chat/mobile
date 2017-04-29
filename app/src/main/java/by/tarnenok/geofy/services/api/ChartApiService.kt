@@ -1,6 +1,7 @@
 package by.tarnenok.geofy.services.api
 
 import retrofit2.Call
+import retrofit2.http.Body
 import retrofit2.http.POST
 
 /**
@@ -8,5 +9,5 @@ import retrofit2.http.POST
  */
 interface ChartApiService {
     @POST("api/chart/create")
-    fun createChart(model: ChartCreateModel) : Call<Void>
+    fun createChart(@Body model: CreateChartModel?) : Call<Void>
 }

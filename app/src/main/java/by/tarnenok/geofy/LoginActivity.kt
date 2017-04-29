@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import android.widget.Button
 import android.widget.EditText
 import by.tarnenok.geofy.services.TokenService
+import by.tarnenok.geofy.services.api.ApiService
 import by.tarnenok.geofy.services.api.ErrorViewModel
 import by.tarnenok.geofy.services.api.TokenModel
 import com.google.gson.Gson
@@ -21,13 +22,15 @@ class LoginActivity : AppCompatActivity(), BaseActivity{
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        ApiService.initialize(apiHost, TokenService(this).get()?.access_token)
+
 
         val loginButton = find<Button>(R.id.button_login);
         loginButton.setOnClickListener{v ->
             val email = find<EditText>(R.id.edit_email).text.toString();
             val password = find<EditText>(R.id.edit_password).text.toString();
             val progressDialog = ProgressDialog.show(this, "", resources.getString(R.string.loading_text))
-            apiService.auth.login(email,password)
+            ApiService.auth.login(email,password)
                     .enqueue(object : Callback<TokenModel> {
                 override fun onResponse(call: Call<TokenModel>?, response: Response<TokenModel>?) {
                     progressDialog.cancel()

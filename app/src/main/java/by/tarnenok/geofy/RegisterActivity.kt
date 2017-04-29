@@ -11,6 +11,7 @@ import android.text.Html
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import by.tarnenok.geofy.services.TokenService
 import by.tarnenok.geofy.services.api.ApiService
 import by.tarnenok.geofy.services.api.UserRegisterModel
 import by.tarnenok.geofy.services.api.AuthenticationApiService
@@ -27,6 +28,7 @@ class RegisterActivity : AppCompatActivity(), BaseActivity {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
+        ApiService.initialize(apiHost, TokenService(this).get()?.access_token)
 
         val registerButton = find<Button>(R.id.button_register)
         registerButton.setOnClickListener{ v ->
@@ -35,7 +37,7 @@ class RegisterActivity : AppCompatActivity(), BaseActivity {
             val password = find<EditText>(R.id.edit_password).text.toString()
             val confirmPassword = find<EditText>(R.id.edit_confirmpassword).text.toString()
             val progressDialog = ProgressDialog.show(this, "", resources.getString(R.string.loading_text))
-            apiService.auth.registerUser(UserRegisterModel(
+            ApiService.auth.registerUser(UserRegisterModel(
                     email,
                     username,
                     password,

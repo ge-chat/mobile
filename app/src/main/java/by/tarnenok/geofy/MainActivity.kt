@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import by.tarnenok.geofy.services.TokenService
+import by.tarnenok.geofy.services.api.ApiService
 import org.jetbrains.anko.find
 import org.jetbrains.anko.onClick
 
@@ -22,6 +23,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        ApiService.initialize(apiHost, TokenService(this).get()?.access_token)
 
         val toolbar = find<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)

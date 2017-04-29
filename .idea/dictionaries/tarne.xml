@@ -2,6 +2,7 @@
   <dictionary name="tarne">
     <words>
       <w>signalr</w>
+      <w>textinput</w>
     </words>
   </dictionary>
 </component>
