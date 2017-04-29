@@ -5,7 +5,6 @@ import android.util.Base64
 import by.tarnenok.geofy.services.api.TokenModel
 import by.tarnenok.geofy.services.api.UserInfo
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import java.util.*
 
 /**

@@ -54,9 +54,7 @@ class ChartRVAdapter(var items: Array<ChartReadModelShort>)
         }
     }
 
-    override fun getItemCount(): Int {
-        return items.size
-    }
+    override fun getItemCount() = items.size
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ChartViewHolder? {
         val view = LayoutInflater.from(parent!!.context).inflate(R.layout.item_chart, parent, false)

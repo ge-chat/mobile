@@ -9,7 +9,7 @@ data class CreateChartModel(val title: String, val latitude: Double, val longitu
 data class SendMessageModel(val message: String, val chartId: String)
 
 //Read models
-data class ChartReadModel(val  id: String, val title: String, val description: String?, val location: Location, val radius: Double, val ownerId: String, val adminIds: Array<String>, val participants : Array<Participant>, val messages: Array<MessageReadModel>)
+data class ChartReadModel(val id: String, val title: String, val description: String?, val location: Location, val radius: Double, val ownerId: String, val adminIds: Array<String>, val participants : Array<Participant>, val messages: Array<MessageReadModel>)
 data class ChartReadModelShort(val  id: String, val title: String, val location: Location, val radius: Double, val ownerId: String, val adminIds: Array<String>, val participants : Array<Participant>, val lastMessage: ShortMessage?)
 data class Location(val longitude: Double, val latitude: Double)
 data class Participant(val userId: String, val userName: String)
