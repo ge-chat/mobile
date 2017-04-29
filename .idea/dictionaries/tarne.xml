@@ -2,8 +2,10 @@
   <dictionary name="tarne">
     <words>
       <w>inlocation</w>
+      <w>sharkeva</w>
       <w>signalr</w>
       <w>textinput</w>
+      <w>textview</w>
     </words>
   </dictionary>
 </component>

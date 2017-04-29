@@ -16,6 +16,7 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
+import by.tarnenok.geofy.android.DividerItemDecoration
 import by.tarnenok.geofy.services.TokenService
 import by.tarnenok.geofy.services.api.ApiService
 import by.tarnenok.geofy.services.api.ChartReadModelShort
@@ -64,6 +65,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         mRecycleView?.setHasFixedSize(true)
         val linearManger = LinearLayoutManager(this)
         mRecycleView?.layoutManager = linearManger
+        mRecycleView?.addItemDecoration(DividerItemDecoration(this))
 
         mApiClient = GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(object : GoogleApiClient.ConnectionCallbacks{
@@ -74,9 +76,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                 mApiClient, mLocationRequest) { location ->
                             updateCharts(location)
                         };
-                        val location = LocationServices.FusedLocationApi.getLastLocation(
-                                mApiClient)
-                        updateCharts(location)
+                        try{
+                            val location = LocationServices.FusedLocationApi.getLastLocation(
+                                    mApiClient)
+                            updateCharts(location)
+                        }catch(ex: Exception){}
                     }
                 })
                 .addOnConnectionFailedListener { }
@@ -144,12 +148,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         mProgress?.start()
         mCallback = ApiService.chart.getInLocation(location.longitude, location.latitude)
         mCallback?.enqueue(object: Callback<Array<ChartReadModelShort>>{
-            override fun onFailure(call: Call<Array<ChartReadModelShort>>?, t: Throwable?) {
+            override fun onFailure(call: Call<Array<ChartReadModelShort>>, t: Throwable?) {
                 mProgress?.stop()
                 toast(R.string.bad_connection)
             }
 
-            override fun onResponse(call: Call<Array<ChartReadModelShort>>?, response: Response<Array<ChartReadModelShort>>?) {
+            override fun onResponse(call: Call<Array<ChartReadModelShort>>, response: Response<Array<ChartReadModelShort>>) {
                 mProgress?.stop()
                 if(response!!.isSuccessful){
                     //TODO fill resycleview

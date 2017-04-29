@@ -2,15 +2,28 @@ package by.tarnenok.geofy
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
+import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import by.tarnenok.geofy.services.api.ChartReadModelShort
+import org.jetbrains.anko.find
+import java.text.SimpleDateFormat
 
 class ChartRVAdapter(var items: Array<ChartReadModelShort>)
     : RecyclerView.Adapter<ChartRVAdapter.ChartViewHolder>() {
 
-    override fun onBindViewHolder(holder: ChartViewHolder?, position: Int) {
+    val df = SimpleDateFormat("HH:mm");
 
+    override fun onBindViewHolder(holder: ChartViewHolder?, position: Int) {
+        if(holder == null) return
+
+        holder.textTitle.text = items[position].title
+        val message = items[position].lastMessage
+        if(message != null){
+            holder.textLastMessage.text = message.content
+            holder.textTime.text = df.format(message.createdDate)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -22,7 +35,15 @@ class ChartRVAdapter(var items: Array<ChartReadModelShort>)
         return ChartViewHolder(view)
     }
 
-    class ChartViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
+    class ChartViewHolder : RecyclerView.ViewHolder{
+        val textTitle: TextView
+        val textLastMessage: TextView
+        val textTime: TextView
 
+        constructor(itemView: View) : super(itemView) {
+            textTitle = itemView.find<TextView>(R.id.textview_title)
+            textLastMessage = itemView.find<TextView>(R.id.textview_last_message)
+            textTime = itemView.find<TextView>(R.id.textview_title)
+        }
     }
 }

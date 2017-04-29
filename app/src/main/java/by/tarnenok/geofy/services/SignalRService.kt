@@ -10,10 +10,11 @@ import microsoft.aspnet.signalr.client.hubs.HubConnection
 object SignalRService{
     fun createConnection(apiHost: String, tokenService: TokenService): HubConnection{
         Platform.loadPlatformComponent(AndroidPlatformComponent());
-        return  HubConnection(apiHost,
+        val connection = HubConnection(apiHost,
                 "authorization=${tokenService.get()?.access_token}",
                 true,
                 Logger { p0, p1 -> print(p0) })
+        return connection
     }
     object Hubs{
         object Chart{

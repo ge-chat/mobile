@@ -21,6 +21,8 @@
         android:id="@+id/recycleview_charts"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/progress_update_charts">
+        android:layout_below="@id/progress_update_charts"
+        tools:listitem="@layout/item_chart"
+        >
     </android.support.v7.widget.RecyclerView>
 </RelativeLayout>
