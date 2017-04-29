@@ -40,7 +40,7 @@ class LoginActivity : AppCompatActivity() {
                         startActivity(mainIntent)
                     }else{
                         val error = Gson().fromJson(response.errorBody().string(), ErrorViewModel::class.java)
-                        alert(resources.getStringByName(error.error, packageName) ?: error.error_description,
+                        alert(error.error_description ?: error.error_description,
                                 resources.getString(R.string.errors_title)){
                             positiveButton(resources.getString(R.string.ok)){}
                         }.show()

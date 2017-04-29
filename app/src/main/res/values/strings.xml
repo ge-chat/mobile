@@ -31,4 +31,5 @@
     <string name="radius">Radius</string>
     <string name="last_message_empty">No messages, be the first!</string>
     <string name="title_activity_create">Chart</string>
+    <string name="send_message">Type message</string>
 </resources>
