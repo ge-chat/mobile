@@ -1,5 +1,6 @@
 package by.tarnenok.geofy
 
+import android.content.Intent
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.TextureView
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import by.tarnenok.geofy.services.api.ChartReadModelShort
 import org.jetbrains.anko.find
+import org.jetbrains.anko.onClick
 import java.text.SimpleDateFormat
 
 class ChartRVAdapter(var items: Array<ChartReadModelShort>)
@@ -44,6 +46,11 @@ class ChartRVAdapter(var items: Array<ChartReadModelShort>)
             textTitle = itemView.find<TextView>(R.id.textview_title)
             textLastMessage = itemView.find<TextView>(R.id.textview_last_message)
             textTime = itemView.find<TextView>(R.id.textview_title)
+
+            itemView.onClick {
+                val intent = Intent(itemView.context, ChartActivity::class.java)
+                itemView.context.startActivity(intent)
+            }
         }
     }
 }
