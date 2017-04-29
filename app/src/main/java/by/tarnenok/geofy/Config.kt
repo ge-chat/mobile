@@ -1,18 +1,14 @@
 package by.tarnenok.geofy
 
-import android.os.Build
-import by.tarnenok.geofy.services.api.ApiService
 import com.google.android.gms.location.LocationRequest
 
 /**
- * Created by tarne on 28.04.16.
+ * Created by tarne on 16.05.16.
  */
-interface BaseActivity {
-    //use dependency injection
-    val apiHost:String
-        get() = "http://192.168.55.2:5000/"
+object Config {
+    val apiHost = "http://192.168.55.2:5000/"
 
-    val mLocationRequest: LocationRequest
+    val locationRequest: LocationRequest
         get(){
             val request = LocationRequest()
             request.interval = 2000

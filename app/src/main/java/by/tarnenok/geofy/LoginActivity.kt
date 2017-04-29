@@ -17,12 +17,12 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class LoginActivity : AppCompatActivity(), BaseActivity{
+class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        ApiService.initialize(apiHost, TokenService(this).get()?.access_token)
+        ApiService.initialize(Config.apiHost, TokenService(this).get()?.access_token)
 
 
         val loginButton = find<Button>(R.id.button_login);

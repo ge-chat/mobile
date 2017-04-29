@@ -32,7 +32,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class CreateChartActivity : AppCompatActivity() , BaseActivity {
+class CreateChartActivity : AppCompatActivity() {
     var mMap: GoogleMap? = null
     var mApiClient: GoogleApiClient? = null
     var mLocation: Location? = null
@@ -44,7 +44,7 @@ class CreateChartActivity : AppCompatActivity() , BaseActivity {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_chart)
-        ApiService.initialize(apiHost, TokenService(this).get()?.access_token)
+        ApiService.initialize(Config.apiHost, TokenService(this).get()?.access_token)
 
         val toolbar = find<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -59,7 +59,7 @@ class CreateChartActivity : AppCompatActivity() , BaseActivity {
 
                  override fun onConnected(bundle: Bundle?) {
                      LocationServices.FusedLocationApi.requestLocationUpdates(
-                             mApiClient, mLocationRequest) { location ->
+                             mApiClient, Config.locationRequest) { location ->
                         setCameraMap(location)
                      };
                      mLocation = LocationServices.FusedLocationApi.getLastLocation(
@@ -128,12 +128,13 @@ class CreateChartActivity : AppCompatActivity() , BaseActivity {
             })
         }
 
-        signalrConnection = SignalRService.createConnection(apiHost, TokenService(this))
+        signalrConnection = SignalRService.createConnection(Config.apiHost, TokenService(this))
 
         val chartHub = signalrConnection!!.createHubProxy(SignalRService.Hubs.Chart.Name)
         chartHub.on(SignalRService.Hubs.Chart.ChartCreated, { data ->
-            //TODO implement actions
             val mainIntent = Intent(this, MainActivity::class.java)
+            val dataStr = Gson().toJson(data)
+            mainIntent.putExtra(ChartActivity.CONSTANTS.KEY_CHART, dataStr)
             startActivity(mainIntent)
         }, ChartReadModel::class.java)
     }

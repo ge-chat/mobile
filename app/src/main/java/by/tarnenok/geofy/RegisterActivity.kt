@@ -23,12 +23,12 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class RegisterActivity : AppCompatActivity(), BaseActivity {
+class RegisterActivity : AppCompatActivity(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
-        ApiService.initialize(apiHost, TokenService(this).get()?.access_token)
+        ApiService.initialize(Config.apiHost, TokenService(this).get()?.access_token)
 
         val registerButton = find<Button>(R.id.button_register)
         registerButton.setOnClickListener{ v ->

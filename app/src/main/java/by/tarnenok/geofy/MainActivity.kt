@@ -31,7 +31,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, BaseActivity {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener{
 
     var mApiClient: GoogleApiClient? = null
     var mProgress: com.rey.material.widget.ProgressView? = null
@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        ApiService.initialize(apiHost, TokenService(this).get()?.access_token)
+        ApiService.initialize(Config.apiHost, TokenService(this).get()?.access_token)
 
         val toolbar = find<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                     override fun onConnected(bundle: Bundle?) {
                         LocationServices.FusedLocationApi.requestLocationUpdates(
-                                mApiClient, mLocationRequest) { location ->
+                                mApiClient, Config.locationRequest) { location ->
                             updateCharts(location)
                         };
                         try{
