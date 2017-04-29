@@ -1,9 +1,17 @@
 <resources>
-    <string name="app_name">Geofy</string>
+    <!--errors-->
+    <string name="userAlreadyRegistred">User already registred</string>
+    <string name="userInvalidCredentials">Invalid credetials</string>
+    <string name="emailReuired">Email required</string>
+    <string name="passwordRequired">Password required</string>
+    <string name="confirmPasswordRequired">Confirm password</string>
+    <string name="userNameRequired">Username required</string>
+    <string name="emailInvalid">Invalid email</string>
+    <string name="title_activity_create_chart">Create chat</string>
 
+    <string name="app_name">Geofy</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
     <string name="action_settings">Settings</string>
     <string name="hint_username">User name</string>
     <string name="hint_email">Email</string>
@@ -17,14 +25,7 @@
     <string name="ok">Ok</string>
     <string name="cancel">Cancel</string>
     <string name="bad_connection">Bad connection</string>
-
-    <!--errors-->
-    <string name="userAlreadyRegistred">User already registred</string>
-    <string name="userInvalidCredentials">Invalid credetials</string>
-    <string name="emailReuired">Email required</string>
-    <string name="passwordRequired">Password required</string>
-    <string name="confirmPasswordRequired">Confirm password</string>
-    <string name="userNameRequired">Username required</string>
-    <string name="emailInvalid">Invalid email</string>
-    <string name="title_activity_create_chart">Create chat</string>
+    <string name="hint_title">Title</string>
+    <string name="create">Create</string>
+    <string name="radius">Radius</string>
 </resources>

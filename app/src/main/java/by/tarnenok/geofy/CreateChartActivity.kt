@@ -2,26 +2,29 @@ package by.tarnenok.geofy
 
 import android.location.Location
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
-import android.util.Log
 import com.google.android.gms.common.api.GoogleApiClient
-import com.google.android.gms.location.LocationListener
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.Circle
+import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
+import com.rey.material.widget.Slider
+import com.rey.material.widget.TextView
 import org.jetbrains.anko.find
 
 class CreateChartActivity : AppCompatActivity() {
     var mMap: GoogleMap? = null
     var mApiClient: GoogleApiClient? = null
     var mLocation: Location? = null
-    var mMarker: Marker? = null
+    var mCircle: Circle? = null
+    var mCircleMarker: Circle? = null
+    var defaultRadiusInMetres = 10.0
 
     val mLocationRequest: LocationRequest
         get(){
@@ -71,6 +74,17 @@ class CreateChartActivity : AppCompatActivity() {
                 setCameraMap(mLocation!!)
             }
         }
+
+        val sliderText = find<TextView>(R.id.textview_radius)
+        sliderText.text = "${resources.getString(R.string.radius)} ($defaultRadiusInMetres)"
+        val slider = find<Slider>(R.id.slider_radius)
+        slider.setValue(defaultRadiusInMetres.toFloat(), true)
+        slider.setOnPositionChangeListener { view, fromUser, oldPos, newPos, oldValue, newValue ->
+            if(mCircle == null) return@setOnPositionChangeListener
+            defaultRadiusInMetres = newValue.toDouble()
+            mCircle?.radius = defaultRadiusInMetres
+            sliderText.text = "${resources.getString(R.string.radius)} ($defaultRadiusInMetres)"
+        }
     }
 
     override fun onStart() {
@@ -84,10 +98,26 @@ class CreateChartActivity : AppCompatActivity() {
     }
 
     private fun setCameraMap(location: Location){
-        if(mMap == null) return
-        if(mMarker != null) mMarker?.remove()
         val latLang = LatLng(location.latitude, location.longitude)
-        mMarker = mMap?.addMarker(MarkerOptions().position(latLang))
+
+        if(mMap == null) return
+        if(mCircle == null){
+            mCircle = mMap?.addCircle(CircleOptions()
+                .fillColor(ContextCompat.getColor(this, R.color.colorHintTransparent))
+                .strokeColor(ContextCompat.getColor(this, R.color.colorPrimaryDark))
+                .strokeWidth(5f)
+                .radius(defaultRadiusInMetres)
+                .center(latLang))
+        }
+        if(mCircleMarker == null){
+            mCircleMarker = mMap?.addCircle(CircleOptions()
+                .fillColor(ContextCompat.getColor(this, R.color.colorPrimaryDark))
+                .strokeWidth(0f)
+                .radius(2.0)
+                .center(latLang))
+        }
+        mCircle?.center = latLang
+        mCircleMarker?.center = latLang
         mMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLang, 18.0f));
     }
 }

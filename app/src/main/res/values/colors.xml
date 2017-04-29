@@ -5,5 +5,6 @@
     <color name="colorAccent">#673AB7</color>
 
     <color name="colorHint">#80CBC4</color>
+    <color name="colorHintTransparent">#8580cbc4</color>
     <color name="colorPrimary_300">#4DB6AC</color>
 </resources>
