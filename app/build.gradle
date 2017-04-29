@@ -32,6 +32,8 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile 'org.jetbrains.anko:anko-sdk15:0.8.3' // sdk19, sdk21, sdk23 are also available
     compile 'org.jetbrains.anko:anko-appcompat-v7:0.8.3' // For appcompat-v7 bindings
+    compile 'com.squareup.retrofit2:retrofit:2.0.2'
+    compile 'com.squareup.retrofit2:converter-gson:2.0.2'
 }
 buildscript {
     ext.kotlin_version = '1.0.1-1'
