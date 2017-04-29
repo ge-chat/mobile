@@ -8,5 +8,6 @@ import by.tarnenok.geofy.services.api.ApiService
 interface BaseActivity {
     //use dependency injection
     val apiService: ApiService
-        get() = ApiService("http://192.168.55.2:5000/")
+        get() = ApiService("http://localhost:5000/")
 }
+//192.168.55.2
