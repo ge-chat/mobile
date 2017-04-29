@@ -11,7 +11,7 @@ interface ChartApiService {
     fun createChart(@Body model: CreateChartModel?) : Call<Void>
 
     @GET("api/chart/inlocation")
-    fun getInLocation(@Query("longitude")longitude: Double, @Query("latitude")latitude: Double) : Call<Array<ChartReadModelShort>>
+    fun getInLocation(@Query("longitude")longitude: Double, @Query("latitude")latitude: Double) : Call<MutableList<ChartReadModelShort>>
 
     @GET("api/chart/{id}")
     fun getChart(@Path("id") id: String) : Call<ChartReadModel>

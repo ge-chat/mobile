@@ -1,9 +1,7 @@
 package by.tarnenok.geofy
 
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.os.PersistableBundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
@@ -21,7 +19,10 @@ import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationServices
 import com.google.gson.Gson
 import microsoft.aspnet.signalr.client.hubs.HubConnection
-import org.jetbrains.anko.*
+import org.jetbrains.anko.backgroundColor
+import org.jetbrains.anko.find
+import org.jetbrains.anko.onClick
+import org.jetbrains.anko.toast
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -94,7 +95,8 @@ class ChartActivity : AppCompatActivity(){
         messagesRV.layoutManager = linearManager
         messagesRV.adapter = MessageRVAdapter(chartModel!!, TokenService(this).get()!!.userInfo().id)
 
-        signalrConnection = SignalRService.createConnection(Config.apiHost, TokenService(this))
+        signalrConnection = SignalRService.createConnection(
+                Config.apiHost, TokenService(this), hashMapOf(Pair("chatId", chartModel!!.id)))
         val chartHub = signalrConnection!!.createHubProxy(SignalRService.Hubs.Chart.Name)
         val handler = Handler()
         chartHub.on(SignalRService.Hubs.Chart.MessagePosted, { data -> handler.post {

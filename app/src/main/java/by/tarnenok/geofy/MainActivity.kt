@@ -3,6 +3,7 @@ package by.tarnenok.geofy
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
+import android.os.Handler
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
@@ -17,12 +18,18 @@ import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import by.tarnenok.geofy.android.DividerItemDecoration
+import by.tarnenok.geofy.services.SignalRService
 import by.tarnenok.geofy.services.TokenService
 import by.tarnenok.geofy.services.api.ApiService
 import by.tarnenok.geofy.services.api.ChartReadModelShort
+import by.tarnenok.geofy.services.api.MessageReadModel
+import by.tarnenok.geofy.services.api.ShortMessage
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationServices
 import com.google.gson.Gson
+import com.rey.material.widget.ProgressView
+import microsoft.aspnet.signalr.client.hubs.HubConnection
+import microsoft.aspnet.signalr.client.hubs.HubProxy
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.find
 import org.jetbrains.anko.onClick
@@ -30,13 +37,20 @@ import org.jetbrains.anko.toast
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener{
 
     var mApiClient: GoogleApiClient? = null
-    var mProgress: com.rey.material.widget.ProgressView? = null
-    var mCallback: Call<Array<ChartReadModelShort>>? = null
+    var mProgress: ProgressView? = null
+    var mCallback: Call<MutableList<ChartReadModelShort>>? = null
     var mRecycleView: RecyclerView? = null
+    var mLocation: Location? = null
+
+    var currentChats:MutableList<ChartReadModelShort> = ArrayList<ChartReadModelShort>()
+
+    var signalrConnection: HubConnection? = null
+    var chartHub: HubProxy? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,7 +101,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 .addApi(LocationServices.API)
                 .build()
 
-        mProgress = find<com.rey.material.widget.ProgressView>(R.id.progress_update_charts)
+        mProgress = find<ProgressView>(R.id.progress_update_charts)
+
+        signalrConnection = SignalRService.createConnection(
+                Config.apiHost, TokenService(this))
+        chartHub = signalrConnection!!.createHubProxy(SignalRService.Hubs.Chart.Name)
+        val handler = Handler()
+        chartHub?.on(SignalRService.Hubs.Chart.MessagePosted, {data -> handler.post {
+            val chart = currentChats.firstOrNull { it.id == data.chartId } ?: return@post
+            chart.lastMessage = ShortMessage(data.id, data.userId, data.created, data.message)
+            mRecycleView!!.adapter.notifyDataSetChanged()
+        }}, MessageReadModel::class.java)
     }
 
     override fun onStart() {
@@ -96,11 +120,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             startActivity(loginIntent)
         }
         mApiClient?.connect()
+        signalrConnection?.start()
         super.onStart()
     }
 
     override fun onStop() {
+        val chatsForRemove = currentChats.map { it.id }
+        if(chatsForRemove.any()) chartHub?.invoke(
+                SignalRService.Hubs.Chart.RemoveConnection, signalrConnection?.connectionId, chatsForRemove)
+
         mApiClient?.disconnect()
+        signalrConnection?.stop()
         super.onStop()
     }
 
@@ -144,24 +174,41 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     fun updateCharts(location: Location){
         if(mCallback != null && !mCallback!!.isExecuted) return
+        if(mLocation != null) if (mLocation!!.distanceTo(location) < 1) return
 
+        mLocation = location
         mProgress?.start()
         mCallback = ApiService.chart.getInLocation(location.longitude, location.latitude)
-        mCallback?.enqueue(object: Callback<Array<ChartReadModelShort>>{
-            override fun onFailure(call: Call<Array<ChartReadModelShort>>, t: Throwable?) {
+        mCallback?.enqueue(object: Callback<MutableList<ChartReadModelShort>>{
+            override fun onFailure(call: Call<MutableList<ChartReadModelShort>>, t: Throwable?) {
                 mProgress?.stop()
+                mLocation = null
                 toast(R.string.bad_connection)
             }
 
-            override fun onResponse(call: Call<Array<ChartReadModelShort>>, response: Response<Array<ChartReadModelShort>>) {
+            override fun onResponse(call: Call<MutableList<ChartReadModelShort>>, response: Response<MutableList<ChartReadModelShort>>) {
                 mProgress?.stop()
                 if(response!!.isSuccessful){
+                    updateConnections(response.body())
+                    currentChats = response.body()
                     //TODO fill resycleview
-                    mRecycleView?.adapter = ChartRVAdapter(response.body())
+                    mRecycleView?.adapter = ChartRVAdapter(currentChats)
                 }else{
                     toast(R.string.bad_connection)
                 }
             }
         })
+    }
+
+    fun updateConnections(chats: MutableList<ChartReadModelShort>){
+        val newChats = chats.map { it.id }.toHashSet()
+        val currentChats = currentChats.map { it.id }.toHashSet()
+        val chatsForAdd = newChats.subtract(currentChats)
+        val chatsForRemove = currentChats.subtract(newChats)
+
+        if(chatsForAdd.any()) chartHub?.invoke(
+                SignalRService.Hubs.Chart.AddConnection, signalrConnection?.connectionId, chatsForAdd)
+        if(chatsForRemove.any()) chartHub?.invoke(
+                SignalRService.Hubs.Chart.RemoveConnection, signalrConnection?.connectionId, chatsForRemove)
     }
 }

@@ -11,7 +11,7 @@ data class SendMessageModel(val message: String, val chartId: String)
 
 //Read models
 data class ChartReadModel(val id: String, val title: String, val description: String?, val location: Location, val radius: Double, val ownerId: String, val adminIds: MutableList<String>, val participants : MutableList<Participant>, val messages: MutableList<MessageReadModel>)
-data class ChartReadModelShort(val  id: String, val title: String, val location: Location, val radius: Double, val ownerId: String, val adminIds: Array<String>, val participants : Array<Participant>, val lastMessage: ShortMessage?)
+data class ChartReadModelShort(val  id: String, val title: String, val location: Location, val radius: Double, val ownerId: String, val adminIds: Array<String>, val participants : Array<Participant>, var lastMessage: ShortMessage?)
 data class Location(val longitude: Double, val latitude: Double)
 data class Participant(val userId: String, val userName: String)
 data class ShortMessage(val messageId: String, val userId:String, val created: Date, val message: String)

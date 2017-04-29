@@ -19,7 +19,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.text.SimpleDateFormat
 
-class ChartRVAdapter(var items: Array<ChartReadModelShort>)
+class ChartRVAdapter(var items: MutableList<ChartReadModelShort>)
     : RecyclerView.Adapter<ChartRVAdapter.ChartViewHolder>() {
 
     val df = SimpleDateFormat("HH:mm");
