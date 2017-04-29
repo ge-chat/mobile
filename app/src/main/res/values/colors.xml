@@ -12,4 +12,7 @@
     <color name="colorYourMessage">#32673ab7</color>
     <color name="colorMessagePressed">#96009688</color>
     <color name="colorYourMessagePressed">#96673ab7</color>
+
+    <color name="white">#ffffff</color>
+    <color name="disabled">#96f3f2f5</color>
 </resources>
