@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="by.tarnenok.geofy"
-    android:versionCode="1"
-    android:versionName="0.1">
+    android:versionCode="3"
+    android:versionName="0.2.1">
+    <uses-sdk
+        android:targetSdkVersion="23"
+        android:minSdkVersion="15"/>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -34,6 +37,9 @@
         </activity>
         <activity
             android:name=".ChartActivity">
+        </activity>
+        <activity
+            android:name=".ChatSettingsActivity">
         </activity>
         <meta-data
             android:name="com.google.android.geo.API_KEY"

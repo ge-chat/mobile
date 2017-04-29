@@ -1,5 +1,6 @@
 package by.tarnenok.geofy
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.support.design.widget.NavigationView
@@ -180,26 +181,26 @@ class ChartActivity : AppCompatActivity(){
     }
 
     fun onNavigationClick(item: MenuItem){
-        when(item.itemId){
+        when(item.itemId) {
             R.id.nav_change_name -> {
                 alert(resources.getString(R.string.change_name)) {
                     customView {
                         verticalLayout {
                             var name: EditText? = null
                             val textLayout = textInputLayout {
-                                name = editText(){
+                                name = editText() {
                                     hint = resources.getString(R.string.name)
                                 }
                             }
                             flatButton(resources.getString(R.string.change)) {
-                                lparams(width = wrapContent, height = wrapContent){
+                                lparams(width = wrapContent, height = wrapContent) {
                                     horizontalGravity = Gravity.RIGHT
                                 }
                                 onClick {
-                                    if(name!!.text.isEmpty()){
+                                    if (name!!.text.isEmpty()) {
                                         textLayout.error = resources.getString(R.string.required)
                                         textLayout.isErrorEnabled = true
-                                    }else{
+                                    } else {
                                         changeChatName(ChangeNameModel(chatModel!!.id, name!!.text.toString()), {
                                             textLayout.error = it
                                         }) {
@@ -213,7 +214,9 @@ class ChartActivity : AppCompatActivity(){
                     }
                 }.show()
             }
-            R.id.nav_settings -> Unit
+            R.id.nav_settings -> startActivity<ChatSettingsActivity>(
+                    "info" to Gson().toJson(
+                            UpdateChatModel(chatModel!!.id, chatModel!!.title, chatModel!!.description, chatModel!!.radius)))
         }
     }
 

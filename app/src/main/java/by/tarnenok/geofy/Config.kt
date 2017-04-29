@@ -8,7 +8,7 @@ import com.google.android.gms.location.LocationRequest
 object Config {
     //val apiHost = "http://192.168.55.2:5000/"
     //val apiHost = "http://localhost:5000/"
-    val apiHost = "http://sharkeva.tech/"
+    val apiHost = "http://52.38.16.208/"
 
     val locationRequest: LocationRequest
         get(){

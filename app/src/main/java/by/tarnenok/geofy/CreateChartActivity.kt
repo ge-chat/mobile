@@ -49,7 +49,7 @@ class CreateChartActivity : AppCompatActivity() {
 
         val toolbar = find<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
-        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha)
+        toolbar.setNavigationIcon(R.drawable.ic_close)
         toolbar.setNavigationOnClickListener { v ->
             onBackPressed()
         }

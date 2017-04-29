@@ -14,3 +14,14 @@ inline fun ViewManager.flatButton(title: String = "", init: com.rey.material.wid
         init()
     }
 }
+
+inline fun ViewManager.circleImage(imageRes: Int) = circleImage(imageRes) {}
+inline fun ViewManager.circleImage(imageRes: Int, init: de.hdodenhof.circleimageview.CircleImageView.() -> Unit) : de.hdodenhof.circleimageview.CircleImageView {
+    return ankoView({ de.hdodenhof.circleimageview.CircleImageView(it) }) {
+        setImageResource(imageRes)
+        init()
+    }
+}
+
+inline fun ViewManager.slider() = slider() {}
+inline fun ViewManager.slider(init: com.rey.material.widget.Slider.() -> Unit) = ankoView({ com.rey.material.widget.Slider(it) }, init)

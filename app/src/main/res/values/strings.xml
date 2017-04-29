@@ -41,4 +41,6 @@
     <string name="required">Required</string>
     <string name="name">Name</string>
     <string name="change_name">Change name</string>
+    <string name="update">Update</string>
+    <string name="description">Description</string>
 </resources>

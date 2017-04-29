@@ -8,6 +8,7 @@ data class TokenModel(val token_type: String, val access_token: String, val expi
 data class CreateChartModel(val title: String, val latitude: Double, val longitude: Double, val radius: Double, val description: String?)
 data class SendMessageModel(val message: String, val chartId: String)
 data class ChangeNameModel(val chatId: String, val name: String)
+data class UpdateChatModel(val chatId: String, val title: String, val description: String?, var radius: Double)
 
 //Read models
 data class ChartReadModel(val id: String, val title: String, val description: String?, val location: Location, val radius: Double, val ownerId: String, val adminIds: MutableList<String>, val participants : MutableList<Participant>, val messages: MutableList<MessageReadModel>)
