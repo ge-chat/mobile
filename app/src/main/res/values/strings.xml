@@ -26,5 +26,5 @@
     <string name="confirmPasswordRequired">Confirm password</string>
     <string name="userNameRequired">Username required</string>
     <string name="emailInvalid">Invalid email</string>
-    <string name="title_activity_create_chart">CreateChat</string>
+    <string name="title_activity_create_chart">Create chat</string>
 </resources>

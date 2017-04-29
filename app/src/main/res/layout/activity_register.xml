@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorPrimary">
     <LinearLayout
         android:orientation="vertical"
@@ -14,50 +15,59 @@
             android:layout_height="wrap_content"
             android:src="@mipmap/ic_launcher"
             android:layout_marginTop="50dp"/>
-        <EditText
-            android:id="@+id/edit_username"
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:hint="@string/hint_username"
-            android:textColor="@android:color/white"
-            android:textColorHint="@color/colorHint"
-            android:textColorHighlight="@android:color/white"
-            android:textColorLink="@android:color/white"
-            />
-        <EditText
-            android:id="@+id/edit_email"
+            app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout"
+            >
+            <EditText
+                android:id="@+id/edit_username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:hint="@string/hint_username"
+                />
+        </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:inputType="textEmailAddress"
-            android:hint="@string/hint_email"
-            android:textColor="@android:color/white"
-            android:textColorHint="@color/colorHint"
-            android:textColorHighlight="@android:color/white"
-            android:textColorLink="@android:color/white"
-            />
-        <EditText
-            android:id="@+id/edit_password"
+            app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout"
+            >
+            <EditText
+                android:id="@+id/edit_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:inputType="textEmailAddress"
+                android:hint="@string/hint_email"
+                />
+        </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:hint="@string/hint_password"
-            android:textColor="@android:color/white"
-            android:textColorHint="@color/colorHint"
-            android:textColorHighlight="@android:color/white"
-            android:textColorLink="@android:color/white"/>
-        <EditText
-            android:id="@+id/edit_confirmpassword"
+            app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout"
+            >
+            <EditText
+                android:id="@+id/edit_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:hint="@string/hint_password"
+                android:inputType="textPassword"/>
+        </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:hint="@string/hint_confirmPassword"
-            android:textColor="@android:color/white"
-            android:textColorHint="@color/colorHint"
-            android:textColorHighlight="@android:color/white"
-            android:textColorLink="@android:color/white"
-            android:inputType="textPassword"/>
+            app:hintTextAppearance="@style/TextAppearance.App.TextInputLayout"
+            >
+            <EditText
+                android:id="@+id/edit_confirmpassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:hint="@string/hint_confirmPassword"
+                android:inputType="textPassword"/>
+        </android.support.design.widget.TextInputLayout>
         <Button
             android:id="@+id/button_register"
             android:layout_width="match_parent"
