@@ -15,3 +15,5 @@ data class Location(val longitude: Double, val latitude: Double)
 data class Participant(val userId: String, val userName: String)
 data class ShortMessage(val messageId: String, val userId:String, val created: Date, val message: String)
 data class MessageReadModel(val id: String, val userId:String, val created: Date, val message: String, val chartId: String)
+
+data class UserInfo(val id: String, val email: String)
