@@ -14,7 +14,6 @@ import by.tarnenok.geofy.services.api.ApiService
 import by.tarnenok.geofy.services.api.ChartReadModel
 import by.tarnenok.geofy.services.api.CreateChartModel
 import com.google.android.gms.common.api.GoogleApiClient
-import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -25,11 +24,10 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
 import com.rey.material.widget.Slider
 import microsoft.aspnet.signalr.client.hubs.HubConnection
-import microsoft.aspnet.signalr.client.hubs.SubscriptionHandler
-import microsoft.aspnet.signalr.client.hubs.SubscriptionHandler1
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.find
 import org.jetbrains.anko.onClick
+import org.jetbrains.anko.toast
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -42,15 +40,6 @@ class CreateChartActivity : AppCompatActivity() , BaseActivity {
     var mCircleMarker: Circle? = null
     var defaultRadiusInMetres = 10.0
     var signalrConnection: HubConnection? = null
-
-    val mLocationRequest: LocationRequest
-        get(){
-            val request = LocationRequest()
-            request.interval = 2000
-            request.fastestInterval = 5000
-            request.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-            return request
-        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -121,13 +110,13 @@ class CreateChartActivity : AppCompatActivity() , BaseActivity {
             )).enqueue(object : Callback<Void> {
                 override fun onFailure(call: Call<Void>?, t: Throwable?) {
                     progress.stop()
-                    alert(resources.getString(R.string.bad_connection)){
-                        positiveButton { resources.getString(R.string.ok) }
-                    }.show()
+                    createChartButton.isEnabled = true
+                    toast(R.string.bad_connection)
                 }
 
                 override fun onResponse(call: Call<Void>?, response: Response<Void>?) {
                     progress.stop()
+                    createChartButton.isEnabled = true
                     if(!response!!.isSuccessful){
                         val errors = Gson().fromJson(response.errorBody().string(), Array<String?>::class.java)
                         alert(errors.toUnorderedListFromResource(resources, packageName)!!,
@@ -144,6 +133,8 @@ class CreateChartActivity : AppCompatActivity() , BaseActivity {
         val chartHub = signalrConnection!!.createHubProxy(SignalRService.Hubs.Chart.Name)
         chartHub.on(SignalRService.Hubs.Chart.ChartCreated, { data ->
             //TODO implement actions
+            val mainIntent = Intent(this, MainActivity::class.java)
+            startActivity(mainIntent)
         }, ChartReadModel::class.java)
     }
 

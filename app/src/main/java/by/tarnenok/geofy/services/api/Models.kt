@@ -7,5 +7,6 @@ data class CreateChartModel(val title: String, val latitude: Double, val longitu
 
 //Read models
 data class ChartReadModel(val  Id: String, val Title: String, val Description: String?, val Location: Location, val Radius: Double, val OwnerId: String, val AdminIds: Array<String>, val Participants : Array<Participant>)
+data class ChartReadModelShort(val  Id: String, val Title: String, val Location: Location, val Radius: Double, val OwnerId: String, val AdminIds: Array<String>, val Participants : Array<Participant>)
 data class Location(val Longitude: Double, val Latitude: Double)
 data class Participant(val UserId: String, val UserName: String)
