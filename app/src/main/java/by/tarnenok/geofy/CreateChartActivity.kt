@@ -2,9 +2,12 @@ package by.tarnenok.geofy
 
 import android.location.Location
 import android.os.Bundle
+import android.os.Handler
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import by.tarnenok.geofy.services.TokenService
+import by.tarnenok.geofy.services.createSignalRConnection
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
@@ -15,18 +18,23 @@ import com.google.android.gms.maps.model.Circle
 import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.rey.material.widget.Slider
-import com.rey.material.widget.TextView
-import org.jetbrains.anko.enabled
+import microsoft.aspnet.signalr.client.LogLevel
+import microsoft.aspnet.signalr.client.Logger
+import microsoft.aspnet.signalr.client.Platform
+import microsoft.aspnet.signalr.client.http.android.AndroidPlatformComponent
+import microsoft.aspnet.signalr.client.hubs.HubConnection
+import org.jetbrains.anko.alert
 import org.jetbrains.anko.find
 import org.jetbrains.anko.onClick
 
-class CreateChartActivity : AppCompatActivity() {
+class CreateChartActivity : AppCompatActivity() , BaseActivity {
     var mMap: GoogleMap? = null
     var mApiClient: GoogleApiClient? = null
     var mLocation: Location? = null
     var mCircle: Circle? = null
     var mCircleMarker: Circle? = null
     var defaultRadiusInMetres = 10.0
+    var signalrConnection: HubConnection? = null
 
     val mLocationRequest: LocationRequest
         get(){
@@ -40,6 +48,8 @@ class CreateChartActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_group)
+
+        signalrConnection = createSignalRConnection(apiHost, TokenService(this))
 
         val toolbar = find<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -98,11 +108,13 @@ class CreateChartActivity : AppCompatActivity() {
 
     override fun onStart() {
         mApiClient!!.connect()
+        signalrConnection!!.start()
         super.onStart()
     }
 
     override fun onStop() {
         mApiClient!!.disconnect()
+        signalrConnection!!.stop()
         super.onStop()
     }
 

@@ -1,4 +1,4 @@
-package by.tarnenok.geofy
+package by.tarnenok.geofy.services
 
 import android.content.Context
 import android.content.SharedPreferences

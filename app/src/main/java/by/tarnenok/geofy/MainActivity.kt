@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
+import by.tarnenok.geofy.services.TokenService
 import org.jetbrains.anko.find
 import org.jetbrains.anko.onClick
 
@@ -75,10 +76,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
-            R.id.nav_camera -> Unit
-            R.id.nav_slideshow -> Unit
-            R.id.nav_manage -> Unit
-            R.id.nav_share -> Unit
             R.id.nav_send -> {
                 TokenService(applicationContext).reset()
                 val loginIntent = Intent(this, LoginActivity::class.java)

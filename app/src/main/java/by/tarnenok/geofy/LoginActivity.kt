@@ -6,9 +6,9 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Button
 import android.widget.EditText
+import by.tarnenok.geofy.services.TokenService
 import by.tarnenok.geofy.services.api.ErrorViewModel
 import by.tarnenok.geofy.services.api.TokenModel
-import by.tarnenok.geofy.services.api.UserLoginModel
 import com.google.gson.Gson
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.find
@@ -37,7 +37,7 @@ class LoginActivity : AppCompatActivity(), BaseActivity{
                         startActivity(mainIntent)
                     }else{
                         val error = Gson().fromJson(response.errorBody().string(), ErrorViewModel::class.java)
-                        alert(error.error_description!!,
+                        alert(resources.getStringByName(error.error, packageName) ?: error.error_description,
                                 resources.getString(R.string.errors_title)){
                             positiveButton(resources.getString(R.string.ok)){}
                         }.show()
