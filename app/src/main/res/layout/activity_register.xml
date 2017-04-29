@@ -2,8 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/colorPrimary"
-    >
+    android:background="@color/colorPrimary">
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -20,8 +19,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:inputType="textEmailAddress"
             android:hint="@string/hint_username"
+            android:textColor="@android:color/white"
+            android:textColorHint="@color/colorHint"
+            android:textColorHighlight="@android:color/white"
+            android:textColorLink="@android:color/white"
+            />
+        <EditText
+            android:id="@+id/edit_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:inputType="textEmailAddress"
+            android:hint="@string/hint_email"
             android:textColor="@android:color/white"
             android:textColorHint="@color/colorHint"
             android:textColorHighlight="@android:color/white"
@@ -37,14 +47,16 @@
             android:textColorHint="@color/colorHint"
             android:textColorHighlight="@android:color/white"
             android:textColorLink="@android:color/white"/>
-        <Button
-            android:id="@+id/button_login"
+        <EditText
+            android:id="@+id/edit_confirmpassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:text="@string/login"
+            android:hint="@string/hint_confirmPassword"
             android:textColor="@android:color/white"
-            android:background="@color/colorPrimary_300" />
+            android:textColorHint="@color/colorHint"
+            android:textColorHighlight="@android:color/white"
+            android:textColorLink="@android:color/white"/>
         <Button
             android:id="@+id/button_register"
             android:layout_width="match_parent"
@@ -52,6 +64,6 @@
             android:layout_margin="5dp"
             android:text="@string/register"
             android:textColor="@android:color/white"
-            style="?android:attr/borderlessButtonStyle"/>
+            android:background="@color/colorPrimary_300" />
     </LinearLayout>
 </ScrollView>

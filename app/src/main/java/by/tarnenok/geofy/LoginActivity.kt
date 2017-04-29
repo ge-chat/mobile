@@ -11,10 +11,16 @@ class LoginActivity : AppCompatActivity(){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        var loginButton = find<Button>(R.id.button_login);
-        loginButton.setOnClickListener({v ->
+        val loginButton = find<Button>(R.id.button_login);
+        loginButton.setOnClickListener{v ->
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
-        });
+        };
+
+        val registerButton = find<Button>(R.id.button_register);
+        registerButton.setOnClickListener{ v ->
+            val intent = Intent(this, RegisterActivity::class.java)
+            startActivity(intent);
+        }
     }
 }
