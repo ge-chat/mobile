@@ -132,7 +132,7 @@ class CreateChartActivity : AppCompatActivity() {
 
         val chartHub = signalrConnection!!.createHubProxy(SignalRService.Hubs.Chart.Name)
         chartHub.on(SignalRService.Hubs.Chart.ChartCreated, { data ->
-            val mainIntent = Intent(this, MainActivity::class.java)
+            val mainIntent = Intent(this, ChartActivity::class.java)
             val dataStr = Gson().toJson(data)
             mainIntent.putExtra(ChartActivity.CONSTANTS.KEY_CHART, dataStr)
             startActivity(mainIntent)
